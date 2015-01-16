@@ -1,3 +1,6 @@
+/* Build the connection between server and connection
+ * Transfer the command from client to execute it specifically
+ */
 package g54ubi.chat.server;
 
 import java.io.BufferedReader;
@@ -7,7 +10,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Connection implements Runnable {
+public class Connection implements Runnable { // create a connection which can run method
 	
 	final static int STATE_UNREGISTERED = 0;
 	final static int STATE_REGISTERED = 1;
@@ -21,7 +24,7 @@ public class Connection implements Runnable {
 	private PrintWriter out;
 	private String username;
 	
-	Connection (Socket client, Server serverReference) {
+	Connection (Socket client, Server serverReference) { // create Connection method
 		this.serverReference = serverReference;
 		this.client = client;
 		this.state = STATE_UNREGISTERED;
@@ -31,15 +34,15 @@ public class Connection implements Runnable {
 	public void run(){
 		String line;
 		try {
-			in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-			out = new PrintWriter(client.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(client.getInputStream())); //create a input data stream, in order to get the data from list
+			out = new PrintWriter(client.getOutputStream(), true);// create an output data stream, to output the data into list
 		} catch (IOException e) {
 			System.out.println("in or out failed");
 			System.exit(-1);
 		}
 		running = true;
 		this.sendOverConnection("OK Welcome to the chat server, there are currelty " + serverReference.getNumberOfUsers() + " user(s) online");
-		while(running) {
+		while(running) { // execute an loop which in read string from readline
 			try {
 				line = in.readLine();
 				validateMessage(line);	
@@ -50,7 +53,7 @@ public class Connection implements Runnable {
 		}
 	}
 	
-	private void validateMessage(String message) {
+	private void validateMessage(String message) { //switch the different operations in response to different command 
 		
 		if(message.length() < 4){
 			sendOverConnection ("BAD invalid command to server");
@@ -88,7 +91,7 @@ public class Connection implements Runnable {
 			
 	}
 	
-	private void stat() {
+	private void stat() { 
 		String status = "There are currently "+serverReference.getNumberOfUsers()+" user(s) on the server ";
 		switch(state) {
 			case STATE_REGISTERED:
@@ -218,5 +221,4 @@ public class Connection implements Runnable {
 	}
 	
 }
-
 	

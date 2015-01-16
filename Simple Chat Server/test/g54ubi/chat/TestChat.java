@@ -16,27 +16,27 @@ public class TestChat {
 	private BufferedReader br;
 	private PrintWriter pw;
 
-	@Before
-	public void setUp() throws Exception {
+	@Before // setup 
+	public void setUp() throws Exception { 
 		sk = new Socket("127.0.0.1", 9000);
 		br = new BufferedReader(new InputStreamReader(sk.getInputStream()));
 		pw = new PrintWriter(sk.getOutputStream(), true);
 	}
 
-	@After
+	@After // deal with when the test finished
 	public void tearDown() throws Exception {
 		System.out.println("quit");
 		pw.println("QUIT");
 		sk.close();
 	}
 
-	@Test
+	@Test // to test connection between server and client， it will show ok if it works well
 	public void testConnect() throws Exception {
 		String line = br.readLine();
 		Assert.assertTrue(line.startsWith("OK"));
 	}
 
-	@Test
+	@Test //if not log in, if command is "iden eric",it should be ok
 	public void testIdenWithoutLogin() throws Exception {
 		br.readLine();
 		pw.println("IDEN eric");
@@ -44,7 +44,7 @@ public class TestChat {
 		Assert.assertTrue(line.startsWith("OK"));
 	}
 	
-	@Test
+	@Test // it should be bad
 	public void testIdenWithLogin() throws Exception {
 		br.readLine();
 		pw.println("IDEN eric");
@@ -54,7 +54,7 @@ public class TestChat {
 		Assert.assertTrue(line.startsWith("BAD"));
 	}
 	
-	@Test
+	@Test //
 	public void testListWithoutLogin() throws Exception {
 		br.readLine();
 		pw.println("LIST");
@@ -122,6 +122,22 @@ public class TestChat {
 		pw.println("RRRRRR");
 		String line = br.readLine();
 		Assert.assertTrue(line.equals("BAD command not recognised"));
+	}
+	@Test
+	public void testQuitWithoutLogin() throws Exception {
+		br.readLine();
+		pw.println("QUIT");
+		String line = br.readLine();
+		Assert.assertTrue(line.equals("OK goodbye"));
+	}
+	@Test
+	public void testQuitWithLogin() throws Exception {
+		br.readLine();
+		pw.println("IDEN eric");
+		br.readLine();
+		pw.println("QUIT");
+		String line = br.readLine();
+		Assert.assertTrue(line.startsWith("OK thank you for sending"));
 	}
 
 }
